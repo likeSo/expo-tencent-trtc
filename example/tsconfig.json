@@ -1,0 +1,10 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "expo-tencent-trtc": ["../src/index"],
+      "expo-tencent-trtc/*": ["../src/*"]
+    }
+  }
+}

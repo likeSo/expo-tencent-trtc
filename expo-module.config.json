@@ -1,0 +1,17 @@
+{
+  "platforms": [
+    "apple",
+    "android",
+    "web"
+  ],
+  "apple": {
+    "modules": [
+      "ExpoTencentTRTCModule"
+    ]
+  },
+  "android": {
+    "modules": [
+      "expo.modules.tencent_trtc.ExpoTencentTRTCModule"
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "name": "expo-tencent-trtc",
+  "version": "0.1.0",
+  "description": "腾讯TRTC SDK的RN+Expo封装版本。官方没有RN支持，本人因为项目中需要使用，主要实现了一部分自己需要用到的功能。",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "build": "expo-module build",
+    "clean": "expo-module clean",
+    "lint": "expo-module lint",
+    "test": "expo-module test",
+    "prepare": "expo-module prepare",
+    "prepublishOnly": "expo-module prepublishOnly",
+    "expo-module": "expo-module",
+    "open:ios": "xed example/ios",
+    "open:android": "open -a \"Android Studio\" example/android"
+  },
+  "keywords": [
+    "react-native",
+    "expo",
+    "expo-tencent-trtc",
+    "ExpoTencentTRTC"
+  ],
+  "repository": "https://github.com/likeSo/expo-tencent-trtc",
+  "bugs": {
+    "url": "https://github.com/likeSo/expo-tencent-trtc/issues"
+  },
+  "author": "Aron <Random1996@163.com> (https://github.com/likeSo)",
+  "license": "MIT",
+  "homepage": "https://github.com/likeSo/expo-tencent-trtc#readme",
+  "dependencies": {
+    "trtc-sdk-v5": "^5.8.6"
+  },
+  "devDependencies": {
+    "@types/react": "~18.3.12",
+    "expo-module-scripts": "^4.0.2",
+    "expo": "~52.0.0",
+    "react-native": "0.76.0"
+  },
+  "peerDependencies": {
+    "expo": "*",
+    "react": "*",
+    "react-native": "*"
+  }
+}
