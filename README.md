@@ -122,6 +122,8 @@ iOS所需权限：https://cloud.tencent.com/document/product/647/32173
 ### 混淆规则
 利用`expo-build-properties`来添加TRTC所需的额外混淆规则。具体参见[`extraProguardRules`](https://docs.expo.dev/versions/latest/sdk/build-properties/)和[TRTC所需的混淆规则](https://cloud.tencent.com/document/product/647/32175)
 
+## 联系我
+QQ群：682911244
 
 ## Roadmap
 - [ ] 渲染视频内容
