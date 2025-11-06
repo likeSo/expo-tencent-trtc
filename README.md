@@ -1,5 +1,5 @@
 ## 关于项目
-本项目是腾讯TRTC服务的RN版本。纯用爱发电，并没有实现所有腾讯TRTC的功能，目前基本可以使用本框架完成语音厅服务。本框架不包含语音厅UI部分，UI需要自己实现。
+本项目是腾讯TRTC服务的RN版本。纯用爱发电，目前已经基本可以使用本框架完成语音厅，以及视频直播，视频聊天等功能。本框架不包含语音厅UI部分，UI需要自己实现。换句话说，如果你有自定义直播间样式的需求，那么你完全可以试试使用本框架！
 
 ## 安装
 `npx expo install expo-tencent-trtc`
@@ -40,7 +40,7 @@ ExpoTencentTRTC.initTRTCCloud()
 - `roomId`: 房间ID（可选）
 - `strRoomId`: 字符串类型的房间ID（可选，与roomId互斥）
 - `userSig`: 鉴权票据，可以前端计算，也可以后端下发
-- `role`: 进入房间角色（TRTCRole类型）
+- `role`: 进入房间角色（TRTCRole类型），观众或者主播
 - `scene`: 使用场景，语音厅或者视频通话（TRTCAppScene类型）
 
 #### `exitRoom(): Promise<void>`
@@ -148,4 +148,5 @@ ExpoTencentTRTC.initTRTCCloud()
 QQ群：682911244
 
 ## Roadmap
-- [ ] 渲染视频内容
+- [x] 渲染视频内容
+- [ ] 增强视频渲染方案，拆分成LocalView以及RemoteView。
