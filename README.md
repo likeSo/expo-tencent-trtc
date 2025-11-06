@@ -25,102 +25,122 @@ ExpoTencentTRTC.initTRTCCloud()
 ```
 
 ## API
-```ts
-  /**
-   * 初始化TRTC Cloud实例。初始化后才可以调用后续方法。
-   */
-  initTRTCCloud(): void;
-  /**
-   * 进入房间。
-   * @param sdkAppId 腾讯TRTC App ID。
-   * @param userId 你的用户体系的用户ID。
-   * @param roomId 房间ID。
-   * @param strRoomId 字符串类型的房间ID，两个ID互斥，传一个就好。
-   * @param userSig 鉴权票据，可以前端计算，也可以后端下发。本框架提供前端计算接口。
-   * @param role 进入房间角色。
-   * @param scene 使用场景，语音厅或者视频通话，详见枚举值。
-   */
-  enterRoom(sdkAppId: number, userId: string, roomId: number | undefined, strRoomId: string | undefined, userSig: string, role: TRTCRole, scene: TRTCAppScene):void;
-  /**
-   * 切换用户角色，主播或者观众。
-   * @param role 新角色。
-   * @param privateMapKey 用于权限控制的权限票据，当您希望某个房间只能让特定的 userId 进入或者上行视频时，需要使用 privateMapKey 进行权限保护。
-   */
-  switchRole(role: TRTCRole, privateMapKey: string | undefined): void;
 
-  /**
-   * 打开本地麦克风采集。腾讯官方文档推荐先开启摄像头和麦克风，再进入房间，因为需要给主播一个测试麦克风和调整美颜的时间。
-   * @param audioQuality 音频采集模式。
-   */
-  startLocalAudio(audioQuality: TRTCAudioQuality): void;
+### 核心方法
 
-  /**
-   * 设置通话外放音量大小。该方法不影响远端音频流的采集，远端用户的音量依然可以获取到，只是本地声音不播放了。
-   * @param volume 音量大小。
-   */
-  setAudioPlaybackVolume(volume: number): void;
+#### `initTRTCCloud(): Promise<void>`
+初始化TRTC Cloud实例。初始化后才可以调用后续方法。
 
-  /**
-   * 退出房间。
-   */
-  exitRoom(): void;
+#### `enterRoom(params: EnterRoomParams): Promise<void>`
+进入房间。
 
-  /**
-   * 切换房间。该接口适用于在线教育场景中，监课老师在多个房间中进行快速切换的场景。在该场景下使用 switchRoom 可以获得比 exitRoom+enterRoom 更好的流畅性和更少的代码量。
-   * @param roomId 房间ID。
-   * @param strRoomId 字符串类型的房间ID
-   * @param userSig 用户签名。非必填，如果不传，则新房间会继续沿用旧房间的签名，此时需要保证旧房间签名没有过期。
-   * @param privateMapKey 用于控制权限的权限票据。仅建议高安全级别的用户使用。
-   */
-  switchRoom(roomId: number | null, strRoomId: string | null, userSig: string | null, privateMapKey: string | null): void
+**EnterRoomParams 对象结构：**
+- `sdkAppId`: 腾讯TRTC App ID
+- `userId`: 你的用户体系的用户ID
+- `roomId`: 房间ID（可选）
+- `strRoomId`: 字符串类型的房间ID（可选，与roomId互斥）
+- `userSig`: 鉴权票据，可以前端计算，也可以后端下发
+- `role`: 进入房间角色（TRTCRole类型）
+- `scene`: 使用场景，语音厅或者视频通话（TRTCAppScene类型）
 
-  /**
-   * 闭麦或取消闭麦。
-   * @param mute 静音或解除静音。
-   */
-  muteLocalAudio(mute: boolean): void;
-  /**
-   * 对指定某个用户静音。当您静音某用户的远端音频时，SDK 会停止播放指定用户的声音，同时也会停止拉取该用户的音频数据。
-   * @param userId 对方用户ID。
-   * @param mute 静音与否。
-   */
-  muteRemoteAudio(userId: string, mute: boolean): void;
+#### `exitRoom(): Promise<void>`
+退出房间。
 
-  /**
-   * 当您静音所有用户的远端音频时，SDK 会停止播放所有来自远端的音频流，同时也会停止拉取所有用户的音频数据。
-   * @param mute 静音与否。
-   */
-  muteAllRemoteAudio(mute: boolean): void;
+#### `switchRoom(params: SwitchRoomParams): Promise<void>`
+切换房间。适用于在线教育场景中，监课老师在多个房间中进行快速切换的场景。
 
-  /**
-   * 设置某个指定用户的声音播放音量。注意，是指定某个用户在本机上的播放音量，而不是是对方用户禁言。
-   * @param userId 指定用户ID。
-   * @param volume 指定音量。
-   */
-  setRemoteAudioVolume(userId: string, volume: number): void;
-  /**
-   * 禁用或开启控制台日志打印。
-   */
-  setConsoleLogEnabled(enabled: boolean): void;
+**SwitchRoomParams 对象结构：**
+- `roomId`: 房间ID（可选）
+- `strRoomId`: 字符串类型的房间ID（可选）
+- `userSig`: 用户签名（可选）
+- `privateMapKey`: 用于控制权限的权限票据（可选）
 
-  /**
-   * 控制台打印日志级别。
-   * @param level 日志级别。
-   */
-  setConsoleLogLevel(level: any): void;
+### 角色与场景
 
-  /**
-   * 设置人声的混响效果。
-   * @param reverbType 混响类型
-   */
-  setVoiceReverbType(reverbType: TRTCReverbType): void;
+#### `switchRole(role: TRTCRole, privateMapKey: string | undefined): Promise<void>`
+切换用户角色，主播或者观众。
 
-  /**
-   * 设置变声特效。
-   * @param changeType 变声类型
-   */
-  setVoiceChangerType(changeType: TRTCVoiceChangerType): void
-```
+### 音频控制
+
+#### `startLocalAudio(audioQuality: TRTCAudioQuality): Promise<void>`
+打开本地麦克风采集。推荐先开启麦克风，再进入房间。
+
+#### `muteLocalAudio(mute: boolean): Promise<void>`
+闭麦或取消闭麦。
+
+#### `muteRemoteAudio(userId: string, mute: boolean): Promise<void>`
+对指定某个用户静音。
+
+#### `muteAllRemoteAudio(mute: boolean): Promise<void>`
+静音所有用户的远端音频。
+
+#### `setAudioPlaybackVolume(volume: number): Promise<void>`
+设置通话外放音量大小。
+
+#### `setRemoteAudioVolume(userId: string, volume: number): Promise<void>`
+设置某个指定用户的声音播放音量。
+
+#### `enableAudioVolumeEvaluation(options: AudioVolumeEvaluationOptions): Promise<void>`
+开启实时音量检测。
+
+**AudioVolumeEvaluationOptions 对象结构：**
+- `enable`: 是否启用音量评估
+- `interval`: 音量提示的时间间隔（毫秒）
+- `enableVadDetection`: 是否启用语音活动检测
+- `enablePitchCalculation`: 是否启用音高计算
+- `enableSpectrumCalculation`: 是否启用频谱计算
+
+### 音效处理
+
+#### `setVoiceReverbType(reverbType: TRTCReverbType): Promise<void>`
+设置人声的混响效果。
+
+#### `setVoiceChangerType(changeType: TRTCVoiceChangerType): Promise<void>`
+设置变声特效。
+
+### 摄像头控制
+
+#### `switchCamera(useFrontCamera: boolean): Promise<void>`
+切换前置/后置摄像头。
+
+### 日志管理
+
+#### `setConsoleLogEnabled(enabled: boolean): Promise<void>`
+禁用或开启控制台日志打印。
+
+#### `setConsoleLogLevel(level: any): void`
+控制台打印日志级别。
+
+### 枚举类型说明
+
+#### TRTCAppScene
+- `videoCall`: 视频通话场景
+- `live`: 直播场景
+- `audioCall`: 语音通话场景
+- `voiceChatRoom`: 语音聊天室场景
+
+#### TRTCRole
+- `anchor`: 主播角色
+- `audience`: 观众角色
+
+#### TRTCAudioQuality
+- `speech`: 语音模式，适合语音通话
+- `default`: 默认模式
+- `music`: 音乐模式，适合唱歌、游戏等场景
+
+#### TRTCReverbType
+- `noEffect`: 无混响
+- `ktv`: KTV混响效果
+- `smallRoom`: 小房间效果
+- `hall`: 大厅混响效果
+- 等多种混响效果选项
+
+#### TRTCVoiceChangerType
+- `noEffect`: 原声
+- `badKid`: 熊孩子
+- `loli`: 萝莉
+- `uncle`: 大叔
+- 等多种变声效果选项
 如果有其他需求，也可以给我提issue
 
 
