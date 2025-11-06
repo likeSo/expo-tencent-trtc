@@ -8,12 +8,42 @@
 
 ### 权限配置
 RTC服务需要一堆权限，比如麦克风和相机权限，安装的权限部分本插件已经自动帮你配置好了，iOS的权限部分，需要你自己在`app.json`中配置。
-安卓所需权限参考（已配置）：https://cloud.tencent.com/document/product/647/32175
-iOS所需权限参考：https://cloud.tencent.com/document/product/647/32173
+
+RCT服务需要摄像头，麦克风等权限。
+[安卓权限配置](https://cloud.tencent.com/document/product/647/32175)部分，本插件已经自动帮你做了。
+[iOS权限配置](https://cloud.tencent.com/document/product/647/32173)，需要在`app.json`或者`app.config.js`中添加以下内容：
+
+```json
+{
+  "expo": {
+    "ios": {
+      "infoPlist": {
+        "NSCameraUsageDescription": "需要访问摄像头",
+        "NSMicrophoneUsageDescription": "需要访问麦克风"
+      }
+    }
+  }
+}
+```
 
 ### 混淆规则
 在安卓上需要添加TRTC所需的混淆规则，以免打包时出现错误。
-利用`expo-build-properties`来添加TRTC所需的额外混淆规则。具体参见[`extraProguardRules`](https://docs.expo.dev/versions/latest/sdk/build-properties/)和[TRTC所需的混淆规则](https://cloud.tencent.com/document/product/647/32175)
+利用`expo-build-properties`来添加TRTC所需的额外混淆规则。在`app.json`或者`app.config.js`中添加以下内容：
+
+```json
+{
+  "expo": {
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+            "extraProguardRules": "-keep class com.tencent.trtc.** { *; }"
+        }
+      ]
+    ]
+  }
+}
+```
 
 ## 使用
 
