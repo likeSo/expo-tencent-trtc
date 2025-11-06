@@ -1,6 +1,6 @@
 import { NativeModule, requireNativeModule } from 'expo';
 
-import { AudioVolumeEvaluationOptions, EnterRoomParams, ExpoTencentTRTCModuleEvents, SwitchRoomParams, TRTCAppScene, TRTCAudioQuality, TRTCReverbType, TRTCRole, TRTCVoiceChangerType } from './ExpoTencentTRTC.types';
+import { AudioVolumeEvaluationOptions, EnterRoomParams, ExpoTencentTRTCModuleEvents, SwitchRoomParams, TRTCAudioQuality, TRTCReverbType, TRTCRole, TRTCVoiceChangerType } from './ExpoTencentTRTC.types';
 
 declare class ExpoTencentTRTCModule extends NativeModule<ExpoTencentTRTCModuleEvents> {
   /**

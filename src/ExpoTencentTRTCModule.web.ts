@@ -1,6 +1,6 @@
 import { registerWebModule, NativeModule } from 'expo';
-import { ExpoTencentTRTCModuleEvents, TRTCRole, TRTCAudioQuality, TRTCAppScene, TRTCLogLevel, TRTCReverbType, TRTCVoiceChangerType, SwitchRoomParams } from './ExpoTencentTRTC.types';
-import TRTC, { UserRole, Scene, LOG_LEVEL, EnterRoomConfig } from 'trtc-sdk-v5'
+import { ExpoTencentTRTCModuleEvents, TRTCRole, TRTCAudioQuality, TRTCReverbType, TRTCVoiceChangerType, SwitchRoomParams } from './ExpoTencentTRTC.types';
+import TRTC, { UserRole, EnterRoomConfig } from 'trtc-sdk-v5'
 
 class ExpoTencentTRTCModule extends NativeModule<ExpoTencentTRTCModuleEvents> {
   private trtcCloud?: TRTC
