@@ -19,7 +19,8 @@ Pod::Spec.new do |s|
   s.static_framework = true
 
   s.dependency 'ExpoModulesCore'
-  s.dependency 'TXLiteAVSDK_Professional', '~> 12.2.16956'
+  # s.dependency 'TXLiteAVSDK_Professional', '~> 12.2.16956'
+  s.dependency 'TXLiteAVSDK_TRTC', '~> 12.8.19666'
 
   # Swift/Objective-C compatibility
   s.pod_target_xcconfig = {

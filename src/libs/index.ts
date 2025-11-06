@@ -35,6 +35,7 @@ function hmac(plainText: string, sdkSecretKey: string): string {
     const encoder = new TextEncoder();
     const keyBuffer = encoder.encode(sdkSecretKey);
     const dataBuffer = encoder.encode(plainText);
+    // @ts-ignore
     const hashBuffer = crypto.subtle.digest("SHA-256", keyBuffer).then((hash) => {
         return crypto.subtle.sign(
             {
@@ -48,6 +49,7 @@ function hmac(plainText: string, sdkSecretKey: string): string {
         const base64String = btoa(String.fromCharCode(...new Uint8Array(signature)));
         return base64String;
     });
+    // @ts-ignore
     return hashBuffer.then((result) => result as string);
 }
 

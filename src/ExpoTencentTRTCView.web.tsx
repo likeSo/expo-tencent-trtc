@@ -3,13 +3,10 @@ import * as React from 'react';
 import { ExpoTencentTRTCViewProps } from './ExpoTencentTRTC.types';
 
 export default function ExpoTencentTRTCView(props: ExpoTencentTRTCViewProps) {
+  // TODO: web 端不支持
   return (
     <div>
-      <iframe
-        style={{ flex: 1 }}
-        src={props.url}
-        onLoad={() => props.onLoad({ nativeEvent: { url: props.url } })}
-      />
+      
     </div>
   );
 }

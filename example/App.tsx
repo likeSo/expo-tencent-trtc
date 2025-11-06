@@ -1,9 +1,17 @@
 import { useEvent } from 'expo';
-import ExpoTencentTRTC, { ExpoTencentTRTCView } from 'expo-tencent-trtc';
+import { ExpoTencentTRTC, ExpoTencentTRTCView, ExpoTencentTRTCViewRef } from 'expo-tencent-trtc';
+import { useEffect, useRef } from 'react';
 import { Button, SafeAreaView, ScrollView, Text, View } from 'react-native';
 
 export default function App() {
-  const onChangePayload = useEvent(ExpoTencentTRTC, 'onChange');
+  const eventPayload = useEvent(ExpoTencentTRTC, 'onTRTCEvent');
+  const ref = useRef<ExpoTencentTRTCViewRef>(null);
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.startLocalPreview(true);
+    }
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -24,12 +32,11 @@ export default function App() {
           />
         </Group>
         <Group name="Events">
-          <Text>{onChangePayload?.value}</Text>
+          <Text>{JSON.stringify(eventPayload)}</Text>
         </Group>
         <Group name="Views">
           <ExpoTencentTRTCView
-            url="https://www.example.com"
-            onLoad={({ nativeEvent: { url } }) => console.log(`Loaded: ${url}`)}
+            ref={ref}
             style={styles.view}
           />
         </Group>

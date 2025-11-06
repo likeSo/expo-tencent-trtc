@@ -44,5 +44,5 @@ android {
 
 
 dependencies {
-  implementation 'com.tencent.liteav:LiteAVSDK_Professional:12.2.0.15072'
+  implementation 'com.tencent.liteav:LiteAVSDK_TRTC:12.9.0.19467'
 }

@@ -1,6 +1,6 @@
 {
   "name": "expo-tencent-trtc",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "腾讯TRTC SDK的RN+Expo封装版本。官方没有RN支持，本人因为项目中需要使用，主要实现了一部分自己需要用到的功能。",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -33,10 +33,10 @@
     "trtc-sdk-v5": "^5.8.6"
   },
   "devDependencies": {
-    "@types/react": "~18.3.12",
-    "expo-module-scripts": "^4.0.2",
-    "expo": "~52.0.0",
-    "react-native": "0.76.0"
+    "@types/react": "~19.1.0",
+    "expo-module-scripts": "^5.0.7",
+    "expo": "^54.0.18",
+    "react-native": "0.81.5"
   },
   "peerDependencies": {
     "expo": "*",

@@ -6,28 +6,26 @@ import com.tencent.liteav.audio.TXAudioEffectManager
 import com.tencent.trtc.TRTCCloud
 import com.tencent.trtc.TRTCCloudDef
 import com.tencent.trtc.TRTCCloudListener
+import expo.modules.kotlin.exception.CodedException
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 import java.net.URL
 import java.util.ArrayList
 
+val notInitializedException =
+    CodedException("ERR_NOT_INITIALIZED", "请先调用initTRTCCloud()方法初始化。", null)
+
 class ExpoTencentTRTCModule : Module() {
     var trtcCloud: TRTCCloud? = null
 
-    // Each module class must implement the definition function. The definition consists of components
-    // that describes the module's functionality and behavior.
-    // See https://docs.expo.dev/modules/module-api for more details about available components.
     override fun definition() = ModuleDefinition {
-        // Sets the name of the module that JavaScript code will use to refer to the module. Takes a string as an argument.
-        // Can be inferred from module's class name, but it's recommended to set it explicitly for clarity.
-        // The module will be accessible from `requireNativeModule('ExpoTencentTRTC')` in JavaScript.
         Name("ExpoTencentTRTC")
 
-        // Sets constant properties on the module. Can take a dictionary or a closure that returns a dictionary.
-        Constants()
-
-        // Defines event names that the module can send to JavaScript.
         Events("onTRTCEvent")
+
+        OnDestroy {
+            TRTCCloud.destroySharedInstance()
+        }
 
         Function("initTRTCCloud") {
             trtcCloud = TRTCCloud.sharedInstance(appContext.reactContext)
@@ -106,22 +104,22 @@ class ExpoTencentTRTCModule : Module() {
             })
         }
 
-        Function("enterRoom") { sdkAppId: Int, userId: String, roomId: Int?, strRoomId: String?, userSig: String, role: Int, scene: Int ->
+        AsyncFunction("enterRoom") { options: EnterRoomParams ->
             if (trtcCloud == null) {
-                return@Function
+                throw notInitializedException
             }
             val enterRoomParams = TRTCCloudDef.TRTCParams()
-            enterRoomParams.sdkAppId = sdkAppId
-            enterRoomParams.userId = userId
-            enterRoomParams.roomId = roomId ?: 0
-            enterRoomParams.strRoomId = strRoomId ?: ""
-            enterRoomParams.role = role
-            trtcCloud?.enterRoom(enterRoomParams, scene)
+            enterRoomParams.sdkAppId = options.sdkAppId
+            enterRoomParams.userId = options.userId
+            enterRoomParams.roomId = options.roomId ?: 0
+            enterRoomParams.strRoomId = options.strRoomId ?: ""
+            enterRoomParams.role = options.role.value
+            trtcCloud?.enterRoom(enterRoomParams, options.scene.value)
         }
 
-        Function("switchRole") { role: Int, privateMapKey: String? ->
+        AsyncFunction("switchRole") { role: Int, privateMapKey: String? ->
             if (trtcCloud == null) {
-                return@Function
+                throw notInitializedException
             }
             if (privateMapKey != null) {
                 trtcCloud?.switchRole(role, privateMapKey)
@@ -130,101 +128,101 @@ class ExpoTencentTRTCModule : Module() {
             }
         }
 
-        Function("startLocalAudio") { audioQuality: Int ->
+        AsyncFunction("startLocalAudio") { audioQuality: Int ->
             if (trtcCloud == null) {
-                return@Function
+                throw notInitializedException
             }
             trtcCloud?.startLocalAudio(audioQuality)
         }
 
-        Function("setAudioPlaybackVolume") { volume: Int ->
+        AsyncFunction("setAudioPlaybackVolume") { volume: Int ->
             if (trtcCloud == null) {
-                return@Function
+                throw notInitializedException
             }
             trtcCloud?.audioPlayoutVolume = volume
         }
 
-        Function("exitRoom") {
+        AsyncFunction("exitRoom") {
             if (trtcCloud == null) {
-                return@Function null
+                throw notInitializedException
             } else {
                 trtcCloud?.exitRoom();
             }
         }
 
-        Function("muteLocalAudio") { mute: Boolean ->
+        AsyncFunction("muteLocalAudio") { mute: Boolean ->
             if (trtcCloud == null) {
-                return@Function
+                throw notInitializedException
             }
 
             trtcCloud?.muteLocalAudio(mute)
         }
 
-        Function("switchRoom") { roomId: Int?, strRoomId: String?, userSig: String?, privateMapKey: String? ->
+        AsyncFunction("switchRoom") { options: SwitchRoomParams ->
             if (trtcCloud == null) {
-                return@Function
+                throw notInitializedException
             }
             val config = TRTCCloudDef.TRTCSwitchRoomConfig()
-            config.roomId = roomId ?: 0
-            config.strRoomId = strRoomId ?: ""
-            config.privateMapKey = privateMapKey
-            config.userSig = userSig
+            config.roomId = options.roomId ?: 0
+            config.strRoomId = options.strRoomId ?: ""
+            config.privateMapKey = options.privateMapKey
+            config.userSig = options.userSig
             trtcCloud?.switchRoom(config)
         }
 
-        Function("muteRemoteAudio") { userId: String, mute: Boolean ->
+        AsyncFunction("muteRemoteAudio") { userId: String, mute: Boolean ->
             if (trtcCloud == null) {
-                return@Function
+                throw notInitializedException
             }
             trtcCloud?.muteRemoteAudio(userId, mute)
         }
 
-        Function("muteAllRemoteAudio") { mute: Boolean ->
+        AsyncFunction("muteAllRemoteAudio") { mute: Boolean ->
             if (trtcCloud == null) {
-                return@Function
+                throw notInitializedException
             }
             trtcCloud?.muteAllRemoteAudio(mute)
         }
 
-        Function("setRemoteAudioVolume") { userId: String, volumn: Int ->
+        AsyncFunction("setRemoteAudioVolume") { userId: String, volumn: Int ->
             if (trtcCloud == null) {
-                return@Function
+                throw notInitializedException
             }
             trtcCloud?.setRemoteAudioVolume(userId, volumn)
         }
 
-        Function("enableAudioVolumeEvaluation") { enable: Boolean, interval: Int, enableVadDetection: Boolean, enablePitchCalculation: Boolean, enableSpectrumCalculation: Boolean ->
+        AsyncFunction("enableAudioVolumeEvaluation") { options: AudioVolumeEvaluationOptions ->
             if (trtcCloud == null) {
-                return@Function
+                throw notInitializedException
             }
             val params = TRTCCloudDef.TRTCAudioVolumeEvaluateParams()
-            params.interval = interval
-            params.enableVadDetection = enableVadDetection
-            params.enablePitchCalculation = enablePitchCalculation
-            params.enableSpectrumCalculation = enableSpectrumCalculation
-            trtcCloud?.enableAudioVolumeEvaluation(enable, params)
+            params.interval = options.interval
+            params.enableVadDetection = options.enableVadDetection
+            params.enablePitchCalculation = options.enablePitchCalculation
+            params.enableSpectrumCalculation = options.enableSpectrumCalculation
+            trtcCloud?.enableAudioVolumeEvaluation(options.enable, params)
 
         }
 
-        Function("setConsoleLogEnabled") { enable: Boolean ->
+        AsyncFunction("setConsoleLogEnabled") { enable: Boolean ->
             if (trtcCloud == null) {
-                return@Function
+                throw notInitializedException
             }
 
             TRTCCloud.setConsoleEnabled(enable)
         }
 
-        Function("setConsoleLogLevel") { level: Int ->
+        AsyncFunction("setConsoleLogLevel") { level: Int ->
             if (trtcCloud == null) {
-                return@Function
+                throw notInitializedException
             }
 
             TRTCCloud.setLogLevel(level)
         }
 
-        Function("setVoiceReverbType") { reverbType: Int ->
+        AsyncFunction("setVoiceReverbType") { reverbType: Int ->
             if (trtcCloud == null) {
-                return@Function
+                throw notInitializedException
             }
             val allValues = TXAudioEffectManager.TXVoiceReverbType.entries.toTypedArray();
             val enumValue = allValues.find { it.nativeValue == reverbType }
@@ -233,9 +231,9 @@ class ExpoTencentTRTCModule : Module() {
             }
         }
 
-        Function("setVoiceChangerType") { changeType: Int ->
+        AsyncFunction("setVoiceChangerType") { changeType: Int ->
             if (trtcCloud == null) {
-                return@Function
+                throw notInitializedException
             }
             val allValues = TXAudioEffectManager.TXVoiceChangerType.entries.toTypedArray();
             val enumValue = allValues.find { it.nativeValue == changeType }
@@ -244,16 +242,54 @@ class ExpoTencentTRTCModule : Module() {
             }
         }
 
-
-        // Enables the module to be used as a native view. Definition components that are accepted as part of
-        // the view definition: Prop, Events.
-        View(ExpoTencentTRTCView::class) {
-            // Defines a setter for the `url` prop.
-            Prop("url") { view: ExpoTencentTRTCView, url: URL ->
-                view.webView.loadUrl(url.toString())
+        AsyncFunction("switchCamera") { useFrontCamera: Boolean ->
+            if (trtcCloud == null) {
+                throw notInitializedException
             }
-            // Defines an event that the view can send to JavaScript.
-            Events("onLoad")
+            val deviceManager = trtcCloud?.deviceManager
+            deviceManager?.switchCamera(useFrontCamera)
+        }
+
+
+        View(ExpoTencentTRTCView::class) {
+
+            AsyncFunction("startLocalPreview") { view: ExpoTencentTRTCView, useFrontCamera: Boolean ->
+                trtcCloud?.startLocalPreview(useFrontCamera, view.contentView)
+            }
+
+            AsyncFunction("stopLocalPreview") { view: ExpoTencentTRTCView ->
+                trtcCloud?.stopLocalPreview()
+            }
+
+            AsyncFunction("startRemoteView") { view: ExpoTencentTRTCView,
+                                               userId: String,
+                                               streamType: VideoStreamType ->
+                trtcCloud?.startRemoteView(
+                    userId,
+                    streamType.value,
+                    view.contentView
+                )
+            }
+
+            AsyncFunction("stopRemoteView") { view: ExpoTencentTRTCView,
+                                              userId: String,
+                                              streamType: VideoStreamType ->
+                trtcCloud?.stopRemoteView(
+                    userId,
+                    streamType.value
+                )
+            }
+
+            AsyncFunction("updateRemoteView") { view: ExpoTencentTRTCView,
+                                                userId: String,
+                                                streamType: VideoStreamType ->
+                trtcCloud?.updateRemoteView(
+                    userId,
+                    streamType.value,
+                    view.contentView
+                )
+            }
+
         }
     }
 }

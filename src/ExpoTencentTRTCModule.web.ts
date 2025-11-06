@@ -1,6 +1,6 @@
 import { registerWebModule, NativeModule } from 'expo';
-import { ExpoTencentTRTCModuleEvents, TRTCRole, TRTCAudioQuality, TRTCAppScene, TRTCLogLevel, TRTCReverbType, TRTCVoiceChangerType } from './ExpoTencentTRTC.types';
-import TRTC, { UserRole, Scene, LOG_LEVEL } from 'trtc-sdk-v5'
+import { ExpoTencentTRTCModuleEvents, TRTCRole, TRTCAudioQuality, TRTCAppScene, TRTCLogLevel, TRTCReverbType, TRTCVoiceChangerType, SwitchRoomParams } from './ExpoTencentTRTC.types';
+import TRTC, { UserRole, Scene, LOG_LEVEL, EnterRoomConfig } from 'trtc-sdk-v5'
 
 class ExpoTencentTRTCModule extends NativeModule<ExpoTencentTRTCModuleEvents> {
   private trtcCloud?: TRTC
@@ -19,15 +19,9 @@ class ExpoTencentTRTCModule extends NativeModule<ExpoTencentTRTCModuleEvents> {
    * @param userSig 鉴权票据，可以前端计算，也可以后端下发。本框架提供前端计算接口。
    * @param role 进入房间角色
    */
-  enterRoom(sdkAppId: number, userId: string, roomId: number | undefined, strRoomId: string | undefined, userSig: string, role: TRTCRole, scene: Scene): void {
+  enterRoom(config: EnterRoomConfig): void {
     if (this.trtcCloud) {
-      this.trtcCloud.enterRoom({
-        roomId, strRoomId,
-        sdkAppId,
-        userId,
-        userSig,
-        scene
-      })
+      this.trtcCloud.enterRoom(config)
     }
   }
   /**
@@ -73,12 +67,9 @@ class ExpoTencentTRTCModule extends NativeModule<ExpoTencentTRTCModuleEvents> {
 
   /**
    * 切换房间。该接口适用于在线教育场景中，监课老师在多个房间中进行快速切换的场景。在该场景下使用 switchRoom 可以获得比 exitRoom+enterRoom 更好的流畅性和更少的代码量。
-   * @param roomId 房间ID。
-   * @param strRoomId 字符串类型的房间ID
-   * @param userSig 用户签名。非必填，如果不传，则新房间会继续沿用旧房间的签名，此时需要保证旧房间签名没有过期。
-   * @param privateMapKey 用于控制权限的权限票据。仅建议高安全级别的用户使用。
+   * @param options 切换房间参数。
    */
-  switchRoom(roomId: number | null, strRoomId: string | null, userSig: string | null, privateMapKey: string | null): void {
+  switchRoom(options: SwitchRoomParams): void {
     if (this.trtcCloud) {
       // this.trtcCloud.
     }
@@ -164,4 +155,4 @@ class ExpoTencentTRTCModule extends NativeModule<ExpoTencentTRTCModuleEvents> {
   }
 }
 
-export default registerWebModule(ExpoTencentTRTCModule);
+export default registerWebModule(ExpoTencentTRTCModule, 'ExpoTencentTRTCModule');

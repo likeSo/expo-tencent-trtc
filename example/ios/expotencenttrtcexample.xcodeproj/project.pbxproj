@@ -254,8 +254,8 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-expotencenttrtcexample/Pods-expotencenttrtcexample-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/TXLiteAVSDK_Professional/Professional/TXSoundTouch.framework/TXSoundTouch",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/TXLiteAVSDK_Professional/Professional/TXFFmpeg.framework/TXFFmpeg",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/TXLiteAVSDK_TRTC/TRTC/TXSoundTouch.framework/TXSoundTouch",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/TXLiteAVSDK_TRTC/TRTC/TXFFmpeg.framework/TXFFmpeg",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -301,7 +301,7 @@
 				"${PODS_CONFIGURATION_BUILD_DIR}/RCT-Folly/RCT-Folly_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/React-Core_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-cxxreact/React-cxxreact_privacy.bundle",
-				"${PODS_ROOT}/TXLiteAVSDK_Professional/TXLiteAVSDK_Professional/TXLiteAVSDK_Professional.xcframework/ios-arm64_armv7/TXLiteAVSDK_Professional.framework/TXLiteAVSDK_Professional.bundle",
+				"${PODS_ROOT}/TXLiteAVSDK_TRTC/TXLiteAVSDK_TRTC/TXLiteAVSDK_TRTC.xcframework/ios-arm64_armv7/TXLiteAVSDK_TRTC.framework/TXLiteAVSDK_TRTC.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/boost/boost_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/glog/glog_privacy.bundle",
 			);
@@ -313,7 +313,7 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RCT-Folly_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-Core_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-cxxreact_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/TXLiteAVSDK_Professional.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/TXLiteAVSDK_TRTC.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/boost_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/glog_privacy.bundle",
 			);

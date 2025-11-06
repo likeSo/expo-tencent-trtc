@@ -4,11 +4,23 @@
 ## 安装
 `npx expo install expo-tencent-trtc`
 
+## 配置
+
+### 权限配置
+RTC服务需要一堆权限，比如麦克风和相机权限，安装的权限部分本插件已经自动帮你配置好了，iOS的权限部分，需要你自己在`app.json`中配置。
+安卓所需权限参考（已配置）：https://cloud.tencent.com/document/product/647/32175
+iOS所需权限参考：https://cloud.tencent.com/document/product/647/32173
+
+### 混淆规则
+在安卓上需要添加TRTC所需的混淆规则，以免打包时出现错误。
+利用`expo-build-properties`来添加TRTC所需的额外混淆规则。具体参见[`extraProguardRules`](https://docs.expo.dev/versions/latest/sdk/build-properties/)和[TRTC所需的混淆规则](https://cloud.tencent.com/document/product/647/32175)
+
 ## 使用
 
 ```ts
-import ExpoTencentTRTC from 'expo-tencent-trtc'
+import { ExpoTencentTRTC } from 'expo-tencent-trtc'
 
+/// 初始化TRTC Cloud实例。初始化后才可以调用后续方法。推荐在用户接受隐私协议后调用。
 ExpoTencentTRTC.initTRTCCloud()
 ```
 
@@ -111,16 +123,6 @@ ExpoTencentTRTC.initTRTCCloud()
 ```
 如果有其他需求，也可以给我提issue
 
-
-### 权限配置
-RTC服务需要一堆权限，比如麦克风和相机权限，权限配置部分在expo里面也算是比较简单，根据以下两个平台所需的权限，在`app.json`中配置即可。
-安卓所需权限：https://cloud.tencent.com/document/product/647/32175
-iOS所需权限：https://cloud.tencent.com/document/product/647/32173
-
-
-
-### 混淆规则
-利用`expo-build-properties`来添加TRTC所需的额外混淆规则。具体参见[`extraProguardRules`](https://docs.expo.dev/versions/latest/sdk/build-properties/)和[TRTC所需的混淆规则](https://cloud.tencent.com/document/product/647/32175)
 
 ## 联系我
 QQ群：682911244

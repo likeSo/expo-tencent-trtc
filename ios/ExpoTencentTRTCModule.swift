@@ -1,166 +1,144 @@
 import ExpoModulesCore
-import TXLiteAVSDK_Professional
+import TXLiteAVSDK_TRTC
+
+let notInitializedException = Exception(name: "ERR_NOT_INITIALIZED", description: "请先调用initTRTCCloud()方法初始化。")
 
 public class ExpoTencentTRTCModule: Module, TRTCCloudDelegateWrapperDelegate {
     var trtcCloud: TRTCCloud?
     
-  // Each module class must implement the definition function. The definition consists of components
-  // that describes the module's functionality and behavior.
-  // See https://docs.expo.dev/modules/module-api for more details about available components.
     public func definition() -> ModuleDefinition {
-        // Sets the name of the module that JavaScript code will use to refer to the module. Takes a string as an argument.
-        // Can be inferred from module's class name, but it's recommended to set it explicitly for clarity.
-        // The module will be accessible from `requireNativeModule('ExpoTencentTRTC')` in JavaScript.
         Name("ExpoTencentTRTC")
         
-        // Sets constant properties on the module. Can take a dictionary or a closure that returns a dictionary.
-        Constants([:])
-        
-        OnCreate {
-            
+        OnDestroy {
+            TRTCCloud.destroySharedInstance()
         }
         
-        // Defines event names that the module can send to JavaScript.
         Events("onTRTCEvent")
         
-        Function("initTRTCCloud") {
-            
-            trtcCloud = TRTCCloud.sharedInstance()
-            
+        /// 初始化SDK
+        AsyncFunction("initTRTCCloud") {
+            self.trtcCloud = TRTCCloud.sharedInstance()
             let delegate = TRTCCloudDelegateWrapper()
             delegate.delegate = self
             
-            trtcCloud?.addDelegate(delegate)
+            self.trtcCloud?.addDelegate(delegate)
             
         }
-        
-        Function("enterRoom") { (sdkAppId: UInt32, 
-                                 userId: String,
-                                 roomId: UInt32?,
-                                 strRoomId: String?,
-                                 userSig: String,
-                                 role: Int,
-                                 scene: Int) in
-            if trtcCloud == nil {
-                return
+        /// 进入房间，开始拉流
+        AsyncFunction("enterRoom") { (options: EnterRoomParams) in
+            if self.trtcCloud == nil {
+                throw notInitializedException
             }
             let params = TRTCParams()
-            params.sdkAppId = sdkAppId
-            params.roomId = roomId ?? 0
-            params.strRoomId = strRoomId ?? ""
-            params.userId = userId
-            params.userSig = userSig
-            params.role = TRTCRoleType(rawValue: role) ?? .audience
+            params.sdkAppId = options.sdkAppId
+            params.roomId = options.roomId ?? 0
+            params.strRoomId = options.strRoomId ?? ""
+            params.userId = options.userId
+            params.userSig = options.userSig
+            params.role = TRTCRoleType(rawValue: options.role.rawValue) ?? .audience
             
-            if let scene = TRTCAppScene(rawValue: scene) {
-                trtcCloud?.enterRoom(params, appScene: scene)
-            } else {
-                #if DEBUG
-                print("请输入正确的TRTCAppScene！")
-                #endif
-            }
+            self.trtcCloud?.enterRoom(params, appScene: TRTCAppScene(rawValue: options.scene.rawValue) ?? .voiceChatRoom)
         }
         
-        Function("switchRole") { (role: Int, privateMapKey: String?) in
-            if trtcCloud == nil {
-                return
+        AsyncFunction("switchRole") { (role: TRTCRole, privateMapKey: String?) in
+            if self.trtcCloud == nil {
+                throw notInitializedException
             }
-            if let role = TRTCRoleType(rawValue: role) {
+            if let role = TRTCRoleType(rawValue: role.rawValue) {
                 if privateMapKey != nil {
-                    trtcCloud?.switch(role, privateMapKey: privateMapKey!)
+                    self.trtcCloud?.switch(role, privateMapKey: privateMapKey!)
                 } else {
-                    trtcCloud?.switch(role)
+                    self.trtcCloud?.switch(role)
                 }
             }
         }
         
-        Function("startLocalAudio") { (audioQuality: Int) in
-            if trtcCloud == nil {
-                return
+        AsyncFunction("startLocalAudio") { (audioQuality: AudioQuality) in
+            if self.trtcCloud == nil {
+                throw notInitializedException
             }
-            if let quality = TRTCAudioQuality(rawValue: audioQuality) {
-                trtcCloud?.startLocalAudio(quality)
+            if let quality = TRTCAudioQuality(rawValue: audioQuality.rawValue) {
+                self.trtcCloud?.startLocalAudio(quality)
             }
         }
         
-        Function("exitRoom") {
-            if trtcCloud == nil {
-                return
+        AsyncFunction("exitRoom") {
+            if self.trtcCloud == nil {
+                throw notInitializedException
             }
-            trtcCloud?.exitRoom()
+            self.trtcCloud?.exitRoom()
         }
         
-        Function("setAudioPlaybackVolume") { (volume: Int) in
-            if trtcCloud == nil {
-                return
+        AsyncFunction("setAudioPlaybackVolume") { (volume: Int) in
+            if self.trtcCloud == nil {
+                throw notInitializedException
             }
-            
-            trtcCloud?.setAudioPlayoutVolume(volume)
+            self.trtcCloud?.setAudioPlayoutVolume(volume)
         }
         
-        Function("muteLocalAudio") { (mute: Bool) in
-            if trtcCloud == nil {
-                return
+        AsyncFunction("muteLocalAudio") { (mute: Bool) in
+            if self.trtcCloud == nil {
+                throw notInitializedException
             }
-            trtcCloud?.muteLocalAudio(mute)
+            self.trtcCloud?.muteLocalAudio(mute)
         }
         
-        Function("switchRoom") { (roomId: UInt32?, strRoomId: String?, userSig: String?, privateMapKey: String?) in
-            if trtcCloud == nil {
-                return
+        AsyncFunction("switchRoom") { (options: SwitchRoomParams) in
+            if self.trtcCloud == nil {
+                throw notInitializedException
             }
             let config = TRTCSwitchRoomConfig()
-            config.roomId = roomId ?? 0
-            config.strRoomId = strRoomId
-            config.privateMapKey = privateMapKey
-            trtcCloud?.switchRoom(config)
-            
+            config.roomId = options.roomId ?? 0
+            config.strRoomId = options.strRoomId ?? ""
+            config.userSig = options.userSig
+            config.privateMapKey = options.privateMapKey
+            self.trtcCloud?.switchRoom(config)
         }
         
-        Function("muteRemoteAudio") { (userId: String, mute: Bool) in
-            if trtcCloud == nil {
-                return
+        AsyncFunction("muteRemoteAudio") { (userId: String, mute: Bool) in
+            if self.trtcCloud == nil {
+                throw notInitializedException
             }
-            trtcCloud?.muteRemoteAudio(userId, mute: mute)
+            self.trtcCloud?.muteRemoteAudio(userId, mute: mute)
         }
         
-        Function("muteAllRemoteAudio") { (mute: Bool) in
-            if trtcCloud == nil {
-                return
+        AsyncFunction("muteAllRemoteAudio") { (mute: Bool) in
+            if self.trtcCloud == nil {
+                throw notInitializedException
             }
-            trtcCloud?.muteAllRemoteAudio(mute)
+            self.trtcCloud?.muteAllRemoteAudio(mute)
         }
         
-        Function("setRemoteAudioVolume") { (userId: String, volumn: Int32) in
-            if (trtcCloud == nil) {
-                return
+        AsyncFunction("setRemoteAudioVolume") { (userId: String, volumn: Int32) in
+            if self.trtcCloud == nil {
+                throw notInitializedException
             }
-            trtcCloud?.setRemoteAudioVolume(userId, volume: volumn)
+            self.trtcCloud?.setRemoteAudioVolume(userId, volume: volumn)
         }
         
         
-        Function("enableAudioVolumeEvaluation") { (enable: Bool, interval: UInt, enableVadDetection: Bool, enablePitchCalculation: Bool, enableSpectrumCalculation: Bool) in
-            if (trtcCloud == nil) {
-                return
+        AsyncFunction("enableAudioVolumeEvaluation") { (options: AudioVolumeEvaluationOptions) in
+            if self.trtcCloud == nil {
+                throw notInitializedException
             }
             let params = TRTCAudioVolumeEvaluateParams()
-            params.interval = interval
-            params.enableVadDetection = enableVadDetection
-            params.enablePitchCalculation = enablePitchCalculation
-            params.enableSpectrumCalculation = enableSpectrumCalculation
-            trtcCloud?.enableAudioVolumeEvaluation(enable, with: params)
+            params.interval = options.interval
+            params.enableVadDetection = options.enableVadDetection
+            params.enablePitchCalculation = options.enablePitchCalculation
+            params.enableSpectrumCalculation = options.enableSpectrumCalculation
+            self.trtcCloud?.enableAudioVolumeEvaluation(options.enable, with: params)
         }
         
-        Function("setConsoleLogEnabled") { (enabled: Bool) in
-            if (trtcCloud == nil) {
-                return
+        AsyncFunction("setConsoleLogEnabled") { (enabled: Bool) in
+            if self.trtcCloud == nil {
+                throw notInitializedException
             }
             TRTCCloud.setConsoleEnabled(enabled)
         }
         
-        Function("setConsoleLogLevel") { (level: Int) in
-            if (trtcCloud == nil) {
-                return
+        AsyncFunction("setConsoleLogLevel") { (level: Int) in
+            if self.trtcCloud == nil {
+                throw notInitializedException
             }
             if let level = TRTCLogLevel(rawValue: level) {
                 TRTCCloud.setLogLevel(level)
@@ -168,44 +146,68 @@ public class ExpoTencentTRTCModule: Module, TRTCCloudDelegateWrapperDelegate {
         }
         
         
-        Function("setVoiceReverbType") { (reverbType: Int) in
-            if (trtcCloud == nil) {
-                return
+        AsyncFunction("setVoiceReverbType") { (reverbType: ReverbType) in
+            if self.trtcCloud == nil {
+                throw notInitializedException
             }
             
-            if let reverbType = TXVoiceReverbType(rawValue: reverbType) {
-                trtcCloud?.getAudioEffectManager().setVoiceReverbType(reverbType)
+            if let reverbType = TXVoiceReverbType(rawValue: reverbType.rawValue) {
+                self.trtcCloud?.getAudioEffectManager().setVoiceReverbType(reverbType)
             }
         }
         
-        Function("setVoiceChangerType") { (changeType: Int) in
-            if (trtcCloud == nil) {
-                return
+        AsyncFunction("setVoiceChangerType") { (changeType: VoiceChangerType) in
+            if self.trtcCloud == nil {
+                throw notInitializedException
             }
             
-            if let changeType = TXVoiceChangeType(rawValue: changeType) {
-                trtcCloud?.getAudioEffectManager().setVoiceChangerType(changeType)
+            if let changeType = TXVoiceChangeType(rawValue: changeType.rawValue) {
+                self.trtcCloud?.getAudioEffectManager().setVoiceChangerType(changeType)
+                
             }
         }
         
+        AsyncFunction("switchCamera") { (useFrontCamera: Bool) in
+            if self.trtcCloud == nil {
+                throw notInitializedException
+            }
+            let deviceManager = trtcCloud?.getDeviceManager()
+            deviceManager?.switchCamera(useFrontCamera)
+        }
         
-        
-        
-        
-        
-        
-        
-        // Enables the module to be used as a native view. Definition components that are accepted as part of the
-        // view definition: Prop, Events.
         View(ExpoTencentTRTCView.self) {
-            // Defines a setter for the `url` prop.
-            Prop("url") { (view: ExpoTencentTRTCView, url: URL) in
-                if view.webView.url != url {
-                    view.webView.load(URLRequest(url: url))
-                }
+            
+            AsyncFunction("startLocalPreview") { (view: ExpoTencentTRTCView, useFrontCamera: Bool) in
+                self.trtcCloud?.startLocalPreview(useFrontCamera, view: view.contentView)
             }
             
-            Events("onLoad")
+            AsyncFunction("stopLocalPreview") { (view: ExpoTencentTRTCView) in
+                self.trtcCloud?.stopLocalPreview()
+            }
+            
+            AsyncFunction("startRemoteView") { (view: ExpoTencentTRTCView,
+                                                userId: String,
+                                                streamType: VideoStreamType) in
+                self.trtcCloud?.startRemoteView(userId,
+                                                streamType: TRTCVideoStreamType(rawValue: streamType.rawValue) ?? .small,
+                                                view: view.contentView)
+            }
+            
+            AsyncFunction("stopRemoteView") { (view: ExpoTencentTRTCView,
+                                               userId: String,
+                                               streamType: VideoStreamType) in
+                self.trtcCloud?.stopRemoteView(userId,
+                                               streamType: TRTCVideoStreamType(rawValue: streamType.rawValue) ?? .small)
+            }
+            
+            AsyncFunction("updateRemoteView") { (view: ExpoTencentTRTCView,
+                                                 userId: String,
+                                                 streamType: VideoStreamType) in
+                self.trtcCloud?.updateRemoteView(view.contentView,
+                                                 streamType: TRTCVideoStreamType(rawValue: streamType.rawValue) ?? .small,
+                                                 forUser: userId)
+            }
+            
         }
     }
     

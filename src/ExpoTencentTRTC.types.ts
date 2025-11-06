@@ -1,20 +1,82 @@
-import type { StyleProp, ViewStyle } from 'react-native';
-
-export type OnLoadEventPayload = {
-  url: string;
-};
+import type { Ref } from "react";
+import type { StyleProp, ViewStyle } from "react-native";
 
 export type ExpoTencentTRTCModuleEvents = {
-  onChange: (params: ChangeEventPayload) => void;
+  /**
+   * TRTC事件回调
+   */
+  onTRTCEvent: (payload: TRTCEventPayload) => void;
 };
 
-export type ChangeEventPayload = {
-  value: string;
+export type TRTCEventPayload = {
+  /**
+   * 事件名称
+   */
+  name: string;
+} & { [key: string]: any };
+
+
+export enum VideoStreamType {
+  /**
+   * 大视频流，高清画质
+   */
+  big = 0,
+  /**
+   * 小视频流，低画质
+   */
+  small = 1,
+  /**
+   * 通常用于屏幕分享
+   */
+  sub = 2,
+}
+
+export type ExpoTencentTRTCViewRef = {
+  /**
+   * 开启本地预览
+   * @param useFrontCamera 是否使用前置摄像头
+   * @returns 
+   */
+  startLocalPreview: (useFrontCamera: boolean) => Promise<void>;
+  /**
+   * 关闭本地预览
+   * @returns 
+   */
+  stopLocalPreview: () => Promise<void>;
+  /**
+   * 开启远程视频流
+   * @param userId 用户ID
+   * @param streamType 视频流类型
+   * @returns 
+   */
+  startRemoteView: (
+    userId: string,
+    streamType: VideoStreamType,
+  ) => Promise<void>;
+  /**
+   * 关闭远程视频流
+   * @param userId 用户ID
+   * @param streamType 视频流类型
+   * @returns 
+   */
+  stopRemoteView: (
+    userId: string,
+    streamType: VideoStreamType,
+  ) => Promise<void>;
+  /**
+   * 更新远程视频流
+   * @param userId 用户ID
+   * @param streamType 视频流类型
+   * @returns 
+   */
+  updateRemoteView: (
+    userId: string,
+    streamType: VideoStreamType,
+  ) => Promise<void>;
 };
 
 export type ExpoTencentTRTCViewProps = {
-  url: string;
-  onLoad: (event: { nativeEvent: OnLoadEventPayload }) => void;
+  ref?: Ref<ExpoTencentTRTCViewRef>;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -51,7 +113,7 @@ export enum TRTCRole {
   /**
    * 房间观众。只能听主播讲话。
    */
-  audience = 21
+  audience = 21,
 }
 
 /**
@@ -69,7 +131,7 @@ export enum TRTCAudioQuality {
   /**
    * 音乐模式。该模式下的 SDK 会采用很高的音频处理带宽以及立体式模式，在最大限度地提升采集质量的同时也会将音频的 DSP 处理模块调节到最弱的级别，从而最大限度地保证音质。因此该模式适合“音乐直播”场景，尤其适合主播采用专业的声卡进行音乐直播的场景。
    */
-  music = 3
+  music = 3,
 }
 
 /**
@@ -99,9 +161,8 @@ export enum TRTCAudioRoute {
   /**
    * 使用 USB 声卡播放。
    */
-  soundCard
+  soundCard,
 }
-
 
 /**
  * TRTC用户音量感知模型。
@@ -110,7 +171,7 @@ export interface TRTCUserVolumeInfo {
   /**
    * 说话者的 userId, 如果 userId 为空则代表是当前用户自己。
    */
-  userId: string | null,
+  userId: string | null;
   /**
    * 说话者的音量大小, 取值范围[0 - 100]。
    */
@@ -127,7 +188,7 @@ export interface TRTCUserVolumeInfo {
    * 音频频谱数据是将音频数据在频率域中的分布，划分为 256 个频率段，使用 spectrumData 记录各个频率段的能量值，每个能量值的取值范围为 [-300, 0]，单位为 dBFS。
    * @note 本地频谱使用编码前的音频数据计算，会受到本地采集音量、BGM等影响；远端频谱使用接收到的音频数据计算，本地调整远端播放音量等操作不会对其产生影响。
    */
-  spectrumData: number[] | null
+  spectrumData: number[] | null;
 }
 
 /**
@@ -162,7 +223,7 @@ export enum TRTCNetworkQuality {
   /**
    * 当前网络不满足 TRTC 的最低要求。
    */
-  down
+  down,
 }
 
 /**
@@ -216,7 +277,7 @@ export enum TRTCReverbType {
   /**
    * 录音棚2。
    */
-  recordingStudio2
+  recordingStudio2,
 }
 
 /**
@@ -281,9 +342,18 @@ export enum TRTCVoiceChangerType {
   /**
    * 空灵声音
    */
-  ethereal = 11
-}
+  ethereal = 11,
 
+  /**
+   * pig king
+   */
+  pigKing = 12,
+
+  /**
+   *  Hulk
+   */
+  hulk = 13,
+}
 
 /**
  * TRTCLogLevel 枚举用于定义日志的不同级别。
@@ -323,5 +393,87 @@ export enum TRTCLogLevel {
   /**
    * 不输出任何 SDK Log。
    */
-  none = 6
+  none = 6,
+}
+
+/**
+ * 进入腾讯TRTC房间所需的参数。
+ */
+export interface EnterRoomParams {
+  /**
+   * 腾讯TRTC App ID。
+   */
+  sdkAppId: number;
+  /**
+   * 你的用户体系的用户ID。
+   */
+  userId: string;
+  /**
+   * 房间ID。
+   */
+  roomId: number | undefined;
+  /**
+   * 字符串类型的房间ID，两个ID互斥，传一个就好。
+   */
+  strRoomId: string | undefined;
+  /**
+   * 用户签名。
+   */
+  userSig: string;
+  /**
+   * 进入房间角色。
+   */
+  role: TRTCRole;
+  /**
+   * 使用场景，语音厅或者视频通话，详见枚举值。
+   */
+  scene: TRTCAppScene;
+}
+
+/**
+ * 切换腾讯TRTC房间所需的参数。
+ */
+export interface SwitchRoomParams {
+  /**
+   * 房间ID。
+   */
+  roomId: number | null;
+  /**
+   * 字符串类型的房间ID，两个ID互斥，传一个就好。
+   */
+  strRoomId: string | null;
+  /**
+   * 用户签名。
+   */
+  userSig: string | null;
+  /**
+   * 用于权限控制的权限票据，当您希望某个房间只能让特定的 userId 进入或者上行视频时，需要使用 privateMapKey 进行权限保护。
+   */
+  privateMapKey: string | null;
+}
+
+/**
+ * 实时音量检测参数。
+ */
+export interface AudioVolumeEvaluationOptions {
+  /**
+   * 是否开启实时音量检测。
+   */
+  enable: boolean;
+  /**
+   * 实时音量检测间隔，单位为毫秒。
+   */
+  interval: number;
+  /**
+   * 是否开启人声检测。
+   */
+  enableVadDetection: boolean;
+  /**
+   * 是否开启人声频率计算。
+   */
+  enablePitchCalculation: boolean;
+  /**
+   * 是否开启人声频谱计算。
+   */
+  enableSpectrumCalculation: boolean;
 }

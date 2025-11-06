@@ -1,6 +1,6 @@
 import { NativeModule, requireNativeModule } from 'expo';
 
-import { ExpoTencentTRTCModuleEvents, TRTCAppScene, TRTCAudioQuality, TRTCReverbType, TRTCRole, TRTCVoiceChangerType } from './ExpoTencentTRTC.types';
+import { AudioVolumeEvaluationOptions, EnterRoomParams, ExpoTencentTRTCModuleEvents, SwitchRoomParams, TRTCAppScene, TRTCAudioQuality, TRTCReverbType, TRTCRole, TRTCVoiceChangerType } from './ExpoTencentTRTC.types';
 
 declare class ExpoTencentTRTCModule extends NativeModule<ExpoTencentTRTCModuleEvents> {
   /**
@@ -9,38 +9,31 @@ declare class ExpoTencentTRTCModule extends NativeModule<ExpoTencentTRTCModuleEv
   initTRTCCloud(): void;
   /**
    * 进入房间。
-   * @param sdkAppId 腾讯TRTC App ID。
-   * @param userId 你的用户体系的用户ID。
-   * @param roomId 房间ID。
-   * @param strRoomId 字符串类型的房间ID，两个ID互斥，传一个就好。
-   * @param userSig 鉴权票据，可以前端计算，也可以后端下发。本框架提供前端计算接口。
-   * @param role 进入房间角色。
-   * @param scene 使用场景，语音厅或者视频通话，详见枚举值。
    */
-  enterRoom(sdkAppId: number, userId: string, roomId: number | undefined, strRoomId: string | undefined, userSig: string, role: TRTCRole, scene: TRTCAppScene):void;
+  enterRoom(params: EnterRoomParams): Promise<void>;
   /**
    * 切换用户角色，主播或者观众。
    * @param role 新角色。
    * @param privateMapKey 用于权限控制的权限票据，当您希望某个房间只能让特定的 userId 进入或者上行视频时，需要使用 privateMapKey 进行权限保护。
    */
-  switchRole(role: TRTCRole, privateMapKey: string | undefined): void;
+  switchRole(role: TRTCRole, privateMapKey: string | undefined): Promise<void>;
 
   /**
    * 打开本地麦克风采集。腾讯官方文档推荐先开启摄像头和麦克风，再进入房间，因为需要给主播一个测试麦克风和调整美颜的时间。
    * @param audioQuality 音频采集模式。
    */
-  startLocalAudio(audioQuality: TRTCAudioQuality): void;
+  startLocalAudio(audioQuality: TRTCAudioQuality): Promise<void>;
 
   /**
    * 设置通话外放音量大小。该方法不影响远端音频流的采集，远端用户的音量依然可以获取到，只是本地声音不播放了。
    * @param volume 音量大小。
    */
-  setAudioPlaybackVolume(volume: number): void;
+  setAudioPlaybackVolume(volume: number): Promise<void>;
 
   /**
    * 退出房间。
    */
-  exitRoom(): void;
+  exitRoom(): Promise<void>;
 
   /**
    * 切换房间。该接口适用于在线教育场景中，监课老师在多个房间中进行快速切换的场景。在该场景下使用 switchRoom 可以获得比 exitRoom+enterRoom 更好的流畅性和更少的代码量。
@@ -49,36 +42,44 @@ declare class ExpoTencentTRTCModule extends NativeModule<ExpoTencentTRTCModuleEv
    * @param userSig 用户签名。非必填，如果不传，则新房间会继续沿用旧房间的签名，此时需要保证旧房间签名没有过期。
    * @param privateMapKey 用于控制权限的权限票据。仅建议高安全级别的用户使用。
    */
-  switchRoom(roomId: number | null, strRoomId: string | null, userSig: string | null, privateMapKey: string | null): void
+  switchRoom(params: SwitchRoomParams): Promise<void>;
 
   /**
    * 闭麦或取消闭麦。
    * @param mute 静音或解除静音。
    */
-  muteLocalAudio(mute: boolean): void;
+  muteLocalAudio(mute: boolean): Promise<void>;
   /**
    * 对指定某个用户静音。当您静音某用户的远端音频时，SDK 会停止播放指定用户的声音，同时也会停止拉取该用户的音频数据。
    * @param userId 对方用户ID。
    * @param mute 静音与否。
    */
-  muteRemoteAudio(userId: string, mute: boolean): void;
+  muteRemoteAudio(userId: string, mute: boolean): Promise<void>;
 
   /**
    * 当您静音所有用户的远端音频时，SDK 会停止播放所有来自远端的音频流，同时也会停止拉取所有用户的音频数据。
    * @param mute 静音与否。
    */
-  muteAllRemoteAudio(mute: boolean): void;
+  muteAllRemoteAudio(mute: boolean): Promise<void>;
 
   /**
    * 设置某个指定用户的声音播放音量。注意，是指定某个用户在本机上的播放音量，而不是是对方用户禁言。
    * @param userId 指定用户ID。
    * @param volume 指定音量。
    */
-  setRemoteAudioVolume(userId: string, volume: number): void;
+  setRemoteAudioVolume(userId: string, volume: number): Promise<void>;
+
+  /**
+   * 开启实时音量检测。
+   */
+  enableAudioVolumeEvaluation(
+    options: AudioVolumeEvaluationOptions,
+  ): Promise<void>;
+
   /**
    * 禁用或开启控制台日志打印。
    */
-  setConsoleLogEnabled(enabled: boolean): void;
+  setConsoleLogEnabled(enabled: boolean): Promise<void>;
 
   /**
    * 控制台打印日志级别。
@@ -90,13 +91,19 @@ declare class ExpoTencentTRTCModule extends NativeModule<ExpoTencentTRTCModuleEv
    * 设置人声的混响效果。
    * @param reverbType 混响类型
    */
-  setVoiceReverbType(reverbType: TRTCReverbType): void;
+  setVoiceReverbType(reverbType: TRTCReverbType): Promise<void>;
 
   /**
    * 设置变声特效。
    * @param changeType 变声类型
    */
-  setVoiceChangerType(changeType: TRTCVoiceChangerType): void
+  setVoiceChangerType(changeType: TRTCVoiceChangerType): Promise<void>;
+
+  /**
+   * 切换摄像头。
+   * @param useFrontCamera 是否使用前置摄像头。
+   */
+  switchCamera(useFrontCamera: boolean): Promise<void>;
 }
 
 // This call loads the native module object from the JSI.
