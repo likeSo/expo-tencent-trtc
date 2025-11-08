@@ -7,11 +7,8 @@
 ## 配置
 
 ### 权限配置
-RTC服务需要一堆权限，比如麦克风和相机权限，安装的权限部分本插件已经自动帮你配置好了，iOS的权限部分，需要你自己在`app.json`中配置。
-
-RCT服务需要摄像头，麦克风等权限。
-[安卓权限配置](https://cloud.tencent.com/document/product/647/32175)部分，本插件已经自动帮你做了。
-[iOS权限配置](https://cloud.tencent.com/document/product/647/32173)，需要在`app.json`或者`app.config.js`中添加以下内容：
+RTC服务需要一堆权限，比如麦克风和相机权限。安卓的权限部分本插件已经自动帮你配置好了。
+iOS的权限部分，需要你自己在`app.json`或者`app.config.js`中配置。
 
 ```json
 {
