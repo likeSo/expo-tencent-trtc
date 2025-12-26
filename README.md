@@ -2,7 +2,9 @@
 本项目是腾讯TRTC服务的RN版本。纯用爱发电，目前已经基本可以使用本框架完成语音厅，以及视频直播，视频聊天等功能。本框架不包含语音厅UI部分，UI需要自己实现。换句话说，如果你有自定义直播间样式的需求，那么你完全可以试试使用本框架！
 
 ## 安装
-`npx expo install expo-tencent-trtc`
+```shell
+npx expo install expo-tencent-trtc
+```
 
 ## 配置
 
