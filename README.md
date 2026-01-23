@@ -47,10 +47,27 @@ iOS的权限部分，需要你自己在`app.json`或者`app.config.js`中配置�
 ## 使用
 
 ```ts
-import { ExpoTencentTRTC } from 'expo-tencent-trtc'
+import { ExpoTencentTRTC, genTestUserSig } from 'expo-tencent-trtc'
+import { useEvent } from 'expo';
 
 /// 初始化TRTC Cloud实例。初始化后才可以调用后续方法。推荐在用户接受隐私协议后调用。
 ExpoTencentTRTC.initTRTCCloud()
+
+/// 进入房间
+ExpoTencentTRTC.enterRoom({
+  sdkAppId: 12345678,
+  userId: 'user123',
+  roomId: 123456,
+  userSig: genTestUserSig('user123', 12345678, '123456787'),
+  role: TRTCRole.Audience,
+  scene: TRTCAppScene.VideoCall,
+})
+
+/// 监听所有的来自TRTC的事件
+const onTRTCEvent = useEvent(ExpoTencentTRTC, 'onTRTCEvent');
+
+// {  name: "onEnterRoom", ...restPayload }
+
 ```
 
 ## API

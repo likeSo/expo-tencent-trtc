@@ -1,5 +1,5 @@
 import { useEvent } from 'expo';
-import { ExpoTencentTRTC, ExpoTencentTRTCView, ExpoTencentTRTCViewRef } from 'expo-tencent-trtc';
+import { ExpoTencentTRTC, ExpoTencentTRTCView, ExpoTencentTRTCViewRef, genTestUserSig } from 'expo-tencent-trtc';
 import { useEffect, useRef } from 'react';
 import { Button, SafeAreaView, ScrollView, Text, View } from 'react-native';
 
